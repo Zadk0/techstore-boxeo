@@ -1,7 +1,7 @@
 {
   "name": "techstore",
   "version": "1.0.0",
-  "description": "Carrito de compras Node.js/Express/EJS/MySQL",
+  "description": "Carrito de compras Node.js/Express/EJS/PostgreSQL",
   "main": "app.js",
   "scripts": {
     "start": "node app.js"
