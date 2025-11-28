@@ -1,4 +1,7 @@
-// Agrega esta línea para importar el módulo 'path' y corregir el error:
+// =======================================================
+// CORRECCIÓN: IMPORTAR MÓDULO 'path'
+// Esto resuelve el error "TypeError: path.join is not a function" en Render
+// =======================================================
 const path = require('path');
 
 // Resto de tus importaciones y configuración
@@ -27,7 +30,7 @@ app.use(session({
     saveUninitialized: true
 }));
 
-// Configuración para servir archivos estáticos (CORREGIDO con path.join)
+// Configuración para servir archivos estáticos (Ahora path.join funciona)
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Establecer EJS como motor de plantillas
