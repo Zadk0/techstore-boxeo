@@ -1,3 +1,4 @@
+const path = require('path');
 const express = require('express');
 const session = require = require('express-session');
 // ¡CAMBIO CLAVE! Usamos 'pg' (PostgreSQL) en lugar de 'mysql2'
