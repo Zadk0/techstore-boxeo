@@ -1,10 +1,9 @@
 // =======================================================
-// CORRECCIÓN: IMPORTAR MÓDULO 'path'
-// Esto resuelve el error "TypeError: path.join is not a function" en Render
+// CORRECCIÓN 1: IMPORTAR MÓDULO 'path'
+// Esto resuelve el error "TypeError: path.join is not a function"
 // =======================================================
 const path = require('path');
 
-// Resto de tus importaciones y configuración
 const express = require('express');
 const bodyParser = require('body-parser');
 const session = require('express-session');
@@ -13,7 +12,7 @@ const { Pool } = require('pg');
 const app = express();
 const port = process.env.PORT || 3000;
 
-// Configuración de la base de datos (usará DATABASE_URL de Render)
+// Configuración de la base de datos (usará DATABASE_URL de Render, que ahora debe ser la URL Pública de Railway)
 const pool = new Pool({
     connectionString: process.env.DATABASE_URL,
     ssl: {
@@ -30,7 +29,7 @@ app.use(session({
     saveUninitialized: true
 }));
 
-// Configuración para servir archivos estáticos (Ahora path.join funciona)
+// Configuración para servir archivos estáticos
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Establecer EJS como motor de plantillas
@@ -40,17 +39,25 @@ app.set('view engine', 'ejs');
 // RUTAS
 // =======================================================
 
-// Ruta principal para listar productos
+// Ruta principal para listar productos (CORREGIDA para pasar 'cart')
 app.get('/', async (req, res) => {
     try {
         const result = await pool.query('SELECT * FROM products ORDER BY id');
+        
+        // CORRECCIÓN 2: Inicializa req.session.cart si no existe, y lo pasa a la vista.
+        if (!req.session.cart) {
+            req.session.cart = [];
+        }
+
         res.render('index', { 
             products: result.rows,
-            user: req.session.user
+            user: req.session.user,
+            cart: req.session.cart // Pasa la variable 'cart' para que la navbar no falle.
         });
     } catch (err) {
         console.error('Error al obtener productos:', err);
-        res.status(500).send('Error interno del servidor');
+        // Mostrar error interno si la conexión a la DB falla (ya no debería fallar si la URL es pública)
+        res.status(500).send('Internal Server Error (Error al obtener productos)');
     }
 });
 
@@ -58,15 +65,12 @@ app.get('/', async (req, res) => {
 app.post('/login', async (req, res) => {
     const { email, password } = req.body;
     try {
-        // Nota: En una aplicación real, NUNCA almacenes contraseñas en texto plano.
-        // Usa bcrypt para hashear y verificar.
         const result = await pool.query('SELECT id, username, email FROM users WHERE email = $1 AND password = $2', [email, password]);
 
         if (result.rows.length > 0) {
             req.session.user = result.rows[0];
             res.redirect('/');
         } else {
-            // Manejar error de autenticación (ej: renderizar la misma página con un mensaje)
             res.redirect('/'); 
         }
     } catch (err) {
@@ -88,7 +92,6 @@ app.get('/logout', (req, res) => {
 // Ruta para añadir un producto al carrito (simulación)
 app.post('/add-to-cart/:id', async (req, res) => {
     const productId = req.params.id;
-    // Lógica simple de carrito: almacenar el ID en la sesión
     if (!req.session.cart) {
         req.session.cart = [];
     }
@@ -102,11 +105,9 @@ app.get('/cart', async (req, res) => {
     let cartProducts = [];
 
     if (cartIds.length > 0) {
-        // Prepara los placeholders para la consulta (ej: $1, $2, $3...)
         const placeholders = cartIds.map((_, i) => `$${i + 1}`).join(',');
         
         try {
-            // Consulta para obtener detalles de los productos en el carrito
             const result = await pool.query(`SELECT * FROM products WHERE id IN (${placeholders})`, cartIds);
             cartProducts = result.rows;
         } catch (err) {
