@@ -1,0 +1,329 @@
+/* ========================================================= */
+/* 1. ESTILOS BASE Y TIPOGRAFÍA */
+/* ========================================================= */
+body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    /* FONDO DIFUMINADO DE AZUL REY A MORADO */
+    background: linear-gradient(to right, #00008B, #800080); /* Azul Rey a Morado */
+    background-attachment: fixed; /* Mantiene el degradado fijo al hacer scroll */
+    color: #F0F0F0; /* Texto principal en gris claro, ahora más brillante */
+    line-height: 1.6;
+    transition: background-color 0.5s;
+}
+a {
+    color: #FF0000; /* Enlaces en Neon Rojo */
+    text-decoration: none;
+    transition: color 0.2s;
+}
+a:hover {
+    color: #fff;
+}
+h1, h2, h3 {
+    text-align: center;
+    margin: 30px 0 20px 0;
+    font-weight: 700;
+    
+    /* EFECTO NEON en TÍTULOS - AHORA ROJO */
+    color: #fff; /* Base blanca para el brillo */
+    text-shadow: 
+      0 0 5px #FF0000, /* Primer capa (cerca) */
+      0 0 10px #FF0000, /* Segunda capa (media) */
+      0 0 20px #FF0000; /* Tercer capa (distante) */
+    transition: text-shadow 0.3s;
+}
+
+/* Contenedores de alerta/vacio */
+.empty-cart, .login-prompt {
+    text-align: center;
+    padding: 20px;
+    background-color: rgba(0, 0, 0, 0.6); /* Fondo semi-transparente para ver el degradado */
+    border: 1px solid #FF0000; /* Borde Neon Rojo */
+    color: #FF0000;
+    border-radius: 5px;
+    width: fit-content;
+    margin: 30px auto;
+    box-shadow: 0 0 10px rgba(255, 0, 0, 0.4);
+}
+
+/* ========================================================= */
+/* 2. HEADER Y NAVBAR */
+/* ========================================================= */
+.main-header {
+    background: rgba(0, 0, 0, 0.8); /* Fondo del header semi-transparente */
+    color: white;
+    box-shadow: 0 0 10px rgba(255, 0, 0, 0.4); /* Sombra de neón rojo */
+}
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 95%;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 15px 0;
+}
+.logo {
+    font-size: 1.8em;
+    font-weight: 700;
+    color: #FF0000; /* Logo Neon Rojo */
+    text-shadow: 0 0 5px #FF0000;
+}
+.nav-links a {
+    color: #E0E0E0;
+    font-weight: 500;
+    margin-left: 25px;
+    padding: 5px 10px;
+    border-radius: 4px;
+    transition: color 0.3s;
+}
+.nav-links a:hover {
+    color: #FF0000; /* Enlaces Neon Rojo al pasar el mouse */
+}
+.user-greeting {
+    color: #DA70D6; /* Magenta suave para usuario */
+    margin-left: 25px;
+}
+.btn-logout {
+    /* Botón de cierre de sesión estilo neón */
+    background: rgba(0, 0, 0, 0.5); /* Semi-transparente */
+    color: #FF0000 !important;
+    border: 1px solid #FF0000;
+    padding: 8px 15px !important;
+    border-radius: 5px;
+    box-shadow: 0 0 5px #FF0000;
+    font-weight: bold;
+}
+.btn-logout:hover {
+    background: rgba(255, 0, 0, 0.2) !important;
+}
+
+/* ========================================================= */
+/* 3. PRODUCTOS (index.ejs) */
+/* ========================================================= */
+.product-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 30px;
+    padding: 40px 5%;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+.product-card {
+    background: rgba(0, 0, 0, 0.7); /* Contenedor semi-transparente */
+    border-radius: 10px;
+    padding: 20px;
+    border: 1px solid rgba(255, 0, 0, 0.2); /* Borde sutil */
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.4);
+    text-align: center;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+.product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 0 15px #FF0000; /* Brillo Neon Rojo al pasar el mouse */
+}
+.product-card img {
+    max-width: 100%;
+    height: 200px; 
+    object-fit: cover;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 0, 0, 0.3); /* Borde de imagen más visible */
+    margin-bottom: 15px;
+}
+.product-card h3 {
+    font-size: 1.4em;
+    margin: 10px 0 5px 0;
+    color: #FF0000; /* Título de producto Neon Rojo */
+    text-shadow: none;
+}
+.product-card .description {
+    color: #B0B0B0; /* Gris más claro para la descripción */
+    font-size: 0.9em;
+    height: 40px;
+    overflow: hidden;
+    margin-bottom: 15px;
+}
+.product-card .price {
+    font-size: 1.8em;
+    color: #FF0000; /* Precio en Neon Rojo */
+    font-weight: 700;
+    text-shadow: 0 0 5px #FF0000;
+    margin: 15px 0;
+}
+.btn-add {
+    /* Botón de acción (Añadir) */
+    background: rgba(0, 0, 0, 0.5); /* Semi-transparente */
+    color: #FF0000;
+    border: 2px solid #FF0000;
+    padding: 12px 25px;
+    cursor: pointer;
+    border-radius: 5px;
+    font-weight: bold;
+    box-shadow: 0 0 8px rgba(255, 0, 0, 0.6);
+    transition: background 0.3s, color 0.3s;
+}
+.btn-add:hover {
+    background: #FF0000;
+    color: white; /* Invierte colores al pasar el mouse */
+    box-shadow: none;
+}
+
+/* ========================================================= */
+/* 4. CARRITO (cart.ejs) */
+/* ========================================================= */
+.cart-items {
+    width: 90%;
+    max-width: 900px;
+    margin: 40px auto;
+    background: rgba(0, 0, 0, 0.7); /* Semi-transparente */
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(255, 0, 0, 0.2);
+    padding: 20px;
+}
+.cart-item {
+    display: grid;
+    grid-template-columns: 80px 3fr 1fr 1fr;
+    gap: 20px;
+    align-items: center;
+    border-bottom: 1px solid rgba(255, 0, 0, 0.1);
+    padding: 15px 0;
+}
+.cart-item img {
+    width: 100%;
+    height: 70px;
+    object-fit: cover;
+    border-radius: 4px;
+}
+.item-info h4 {
+    text-align: left;
+    margin: 0;
+    color: #F0F0F0;
+}
+.btn-qty {
+    padding: 8px 12px;
+    border: 1px solid #FF0000;
+    background: rgba(0, 0, 0, 0.5);
+    color: #FF0000;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background 0.2s;
+}
+.btn-qty:hover {
+    background: rgba(255, 0, 0, 0.2);
+}
+.btn-remove {
+    background: rgba(0, 0, 0, 0.5);
+    color: #FF0000; /* Botón de remover Neon Rojo */
+    border: 1px solid #FF0000;
+    padding: 8px 12px;
+    border-radius: 4px;
+    box-shadow: 0 0 5px #FF0000;
+}
+.item-total {
+    font-weight: bold;
+    text-align: right;
+    color: #FF0000; /* Total del item Neon Rojo */
+}
+.cart-total {
+    text-align: right;
+    width: 90%;
+    max-width: 900px;
+    margin: 20px auto;
+    font-size: 2.2em;
+    color: #FF0000; /* Total general Neon Rojo */
+    text-shadow: 0 0 10px #FF0000;
+    border-top: 2px dashed rgba(255, 0, 0, 0.3);
+    padding-top: 20px;
+}
+.btn-checkout {
+    /* Botón de Checkout */
+    display: block;
+    width: 90%;
+    max-width: 900px;
+    margin: 0 auto 50px;
+    text-align: center;
+    padding: 18px;
+    background: rgba(0, 0, 0, 0.5); 
+    color: #FF0000;
+    border: 2px solid #FF0000;
+    font-size: 1.3em;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: bold;
+    box-shadow: 0 0 15px rgba(255, 0, 0, 0.8);
+    transition: background 0.3s, color 0.3s;
+}
+.btn-checkout:hover {
+    background: #FF0000;
+    color: white;
+    box-shadow: none;
+}
+
+/* ========================================================= */
+/* 5. AUTENTICACIÓN Y HISTORIAL */
+/* ========================================================= */
+.auth-container {
+    max-width: 380px;
+    margin: 50px auto;
+    padding: 40px;
+    background: rgba(0, 0, 0, 0.7); /* Semi-transparente */
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(255, 0, 0, 0.2);
+}
+.form-group input {
+    width: 95%;
+    padding: 12px;
+    border: 1px solid rgba(255, 0, 0, 0.3);
+    background: rgba(0, 0, 0, 0.4);
+    color: #F0F0F0;
+    border-radius: 5px;
+}
+.btn-auth {
+    /* Botón de Login/Register */
+    width: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    color: #FF0000;
+    border: 2px solid #FF0000;
+    padding: 12px 0;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 1.1em;
+    box-shadow: 0 0 8px rgba(255, 0, 0, 0.6);
+    transition: background 0.3s, color 0.3s;
+}
+.btn-auth:hover {
+    background: #FF0000;
+    color: white;
+    box-shadow: none;
+}
+
+/* Historial */
+.history-table {
+    width: 80%;
+    max-width: 1000px;
+    margin: 30px auto;
+    border-collapse: collapse;
+    background: rgba(0, 0, 0, 0.7); /* Semi-transparente */
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 0 10px rgba(255, 0, 0, 0.2);
+}
+.history-table th, .history-table td {
+    padding: 15px;
+    border-bottom: 1px solid rgba(255, 0, 0, 0.1);
+    text-align: left;
+}
+.history-table th {
+    background-color: rgba(0, 0, 0, 0.8);
+    color: #FF0000; /* Cabecera de tabla Neon Rojo */
+    font-weight: 500;
+}
+.history-table tr:nth-child(even) {
+    background-color: rgba(0, 0, 0, 0.4); /* Fondo más oscuro para filas pares */
+}
+.history-table .total-paid {
+    font-weight: 700;
+    color: #FF0000; /* Total pagado en Neon Rojo */
+    text-shadow: 0 0 3px #FF0000;
+}

@@ -1,0 +1,6 @@
+# Dependencias de Node
+/node_modules
+# Variables de entorno sensibles
+.env
+# Archivos de sesión (si no usas una base de datos de sesión)
+/sessions

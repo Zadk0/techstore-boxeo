@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Historial - TechStore</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+    <%- include('partials/navbar') %>
+
+    <h1 class="history-title">📜 Historial de Compras de <%= user.username %></h1>
+    
+    <% if (orders.length === 0) { %>
+        <p class="empty-cart">Aún no has realizado ninguna compra.</p>
+    <% } else { %>
+        <table class="history-table">
+            <thead>
+                <tr>
+                    <th>ID de Orden</th>
+                    <th>Fecha de Compra</th>
+                    <th>Total Pagado</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% orders.forEach(order => { %>
+                    <tr>
+                        <td>#<%= order.id %></td>
+                        <td><%= new Date(order.date).toLocaleDateString('es-ES', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' }) %></td>
+                        <td><span class="total-paid">$<%= order.total.toFixed(2) %></span></td>
+                    </tr>
+                <% }); %>
+            </tbody>
+        </table>
+    <% } %>
+</body>
+</html>

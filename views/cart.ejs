@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Carrito - TechStore</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+    <%- include('partials/navbar') %>
+
+    <h1>🛍️ Tu Carrito de Compras</h1>
+    
+    <% if (cart.length === 0) { %>
+        <p class="empty-cart">Tu carrito está vacío. <a href="/">¡Añade algo!</a></p>
+    <% } else { %>
+        <div class="cart-items" id="cart-list">
+            <% cart.forEach(item => { %>
+                <div class="cart-item" id="item-<%= item.id %>">
+                    <img src="/images/<%= item.image %>" alt="<%= item.name %>">
+                    <div class="item-info">
+                        <h4><%= item.name %></h4>
+                        <p>Precio Unitario: $<span class="item-price"><%= item.price.toFixed(2) %></span></p>
+                    </div>
+                    <div class="item-controls">
+                        <button onclick="updateCart('<%= item.id %>', 'decrease')" class="btn-qty">-</button>
+                        <span class="item-quantity" id="qty-<%= item.id %>"><%= item.quantity %></span>
+                        <button onclick="updateCart('<%= item.id %>', 'increase')" class="btn-qty">+</button>
+                        <button onclick="updateCart('<%= item.id %>', 'remove')" class="btn-remove">🗑️</button>
+                    </div>
+                    <div class="item-total">
+                        Subtotal: $<span class="item-subtotal"><%= (item.price * item.quantity).toFixed(2) %></span>
+                    </div>
+                </div>
+            <% }); %>
+        </div>
+
+        <h2 class="cart-total">Total: $<span id="grand-total"><%= total %></span></h2>
+
+        <% if (user) { %>
+            <a href="/checkout" class="btn-checkout">Proceder a la Compra y Obtener Ticket PDF</a>
+        <% } else { %>
+            <p class="login-prompt">Por favor, <a href="/login">inicia sesión</a> para proceder a la compra.</p>
+        <% } %>
+    <% } %>
+
+    <script>
+    // Función para calcular y mostrar el subtotal de una fila
+    function calculateSubtotal(itemElement, quantity) {
+        const price = parseFloat(itemElement.querySelector('.item-price').innerText);
+        const subtotal = (quantity * price).toFixed(2);
+        itemElement.querySelector('.item-subtotal').innerText = subtotal;
+    }
+
+    // Función para actualizar el carrito con AJAX/Fetch (El tiempo real)
+    function updateCart(id, action) {
+        fetch('/update-cart', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id, action })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if(data.success) {
+                const itemElement = document.getElementById('item-' + id);
+                
+                if (action === 'remove' || (action === 'decrease' && !data.cart.find(i => i.id == id))) {
+                     // Caso 1: Item borrado o cantidad llega a 0
+                    itemElement.remove();
+                } else {
+                    // Caso 2: Cantidad modificada
+                    const updatedItem = data.cart.find(i => i.id == id);
+                    if(updatedItem) {
+                       document.getElementById('qty-' + id).innerText = updatedItem.quantity;
+                       calculateSubtotal(itemElement, updatedItem.quantity);
+                    }
+                }
+
+                // Actualizar el total general y verificar si está vacío
+                document.getElementById('grand-total').innerText = data.newTotal.toFixed(2);
+
+                if (data.cart.length === 0) {
+                    document.getElementById('cart-list').innerHTML = '<p class="empty-cart">Tu carrito está vacío. <a href="/">¡Añade algo!</a></p>';
+                    document.querySelector('.cart-total').style.display = 'none';
+                    document.querySelector('.btn-checkout') ? document.querySelector('.btn-checkout').style.display = 'none' : null;
+                }
+            }
+        });
+    }
+    </script>
+</body>
+</html>
