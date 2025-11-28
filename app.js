@@ -1,6 +1,6 @@
 // =======================================================
 // CORRECCIÓN 1: IMPORTAR MÓDULO 'path'
-// Esto resuelve el error "TypeError: path.join is not a function" en Render
+// Esto resuelve el error "TypeError: path.join is not a function"
 // =======================================================
 const path = require('path');
 
@@ -13,7 +13,7 @@ const app = express();
 const port = process.env.PORT || 3000;
 
 // Configuración de la base de datos.
-// Asume que process.env.DATABASE_URL contiene la URL Pública de Railway
+// Usará la variable DATABASE_URL que tienes en Render (con la URL Pública de Railway)
 const pool = new Pool({
     connectionString: process.env.DATABASE_URL,
     ssl: {
@@ -25,9 +25,9 @@ const pool = new Pool({
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-// Nota: MemoryStore no es para producción. En una app real, usa 'connect-pg-simple'.
+// Configuración de Sesión
 app.use(session({
-    secret: 'tu_clave_secreta_aqui', // CAMBIAR en producción
+    secret: 'tu_clave_secreta_aqui', // Cambiar en producción
     resave: false,
     saveUninitialized: true
 }));
@@ -47,7 +47,7 @@ app.get('/', async (req, res) => {
     try {
         const result = await pool.query('SELECT * FROM products ORDER BY id');
         
-        // CORRECCIÓN 2: Inicializa req.session.cart si no existe.
+        // CORRECCIÓN 2: Asegura que req.session.cart exista, aunque esté vacío.
         if (!req.session.cart) {
             req.session.cart = [];
         }
@@ -55,7 +55,7 @@ app.get('/', async (req, res) => {
         res.render('index', { 
             products: result.rows,
             user: req.session.user,
-            cart: req.session.cart // Pasa la variable 'cart' para que la navbar no falle.
+            cart: req.session.cart // **CRÍTICO:** Pasa la variable 'cart' para que la navbar funcione.
         });
     } catch (err) {
         console.error('Error al obtener productos:', err);
@@ -68,14 +68,12 @@ app.get('/', async (req, res) => {
 app.post('/login', async (req, res) => {
     const { email, password } = req.body;
     try {
-        // Nota: Las contraseñas se deben hashear con bcrypt.
         const result = await pool.query('SELECT id, username, email FROM users WHERE email = $1 AND password = $2', [email, password]);
 
         if (result.rows.length > 0) {
             req.session.user = result.rows[0];
             res.redirect('/');
         } else {
-            // Manejar error de autenticación 
             res.redirect('/'); 
         }
     } catch (err) {
