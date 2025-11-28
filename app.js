@@ -1,6 +1,6 @@
 // =======================================================
 // CORRECCIÓN 1: IMPORTAR MÓDULO 'path'
-// Esto resuelve el error "TypeError: path.join is not a function"
+// Esto resuelve el error "TypeError: path.join is not a function" en Render
 // =======================================================
 const path = require('path');
 
@@ -12,7 +12,8 @@ const { Pool } = require('pg');
 const app = express();
 const port = process.env.PORT || 3000;
 
-// Configuración de la base de datos (usará DATABASE_URL de Render, que ahora debe ser la URL Pública de Railway)
+// Configuración de la base de datos.
+// Asume que process.env.DATABASE_URL contiene la URL Pública de Railway
 const pool = new Pool({
     connectionString: process.env.DATABASE_URL,
     ssl: {
@@ -23,8 +24,10 @@ const pool = new Pool({
 // Middleware
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+
+// Nota: MemoryStore no es para producción. En una app real, usa 'connect-pg-simple'.
 app.use(session({
-    secret: 'tu_clave_secreta_aqui', // Cambia esto en producción
+    secret: 'tu_clave_secreta_aqui', // CAMBIAR en producción
     resave: false,
     saveUninitialized: true
 }));
@@ -44,7 +47,7 @@ app.get('/', async (req, res) => {
     try {
         const result = await pool.query('SELECT * FROM products ORDER BY id');
         
-        // CORRECCIÓN 2: Inicializa req.session.cart si no existe, y lo pasa a la vista.
+        // CORRECCIÓN 2: Inicializa req.session.cart si no existe.
         if (!req.session.cart) {
             req.session.cart = [];
         }
@@ -56,8 +59,8 @@ app.get('/', async (req, res) => {
         });
     } catch (err) {
         console.error('Error al obtener productos:', err);
-        // Mostrar error interno si la conexión a la DB falla (ya no debería fallar si la URL es pública)
-        res.status(500).send('Internal Server Error (Error al obtener productos)');
+        // Si hay un error, mostrar un mensaje claro al usuario.
+        res.status(500).send('Internal Server Error: No se pudieron cargar los productos.');
     }
 });
 
@@ -65,17 +68,19 @@ app.get('/', async (req, res) => {
 app.post('/login', async (req, res) => {
     const { email, password } = req.body;
     try {
+        // Nota: Las contraseñas se deben hashear con bcrypt.
         const result = await pool.query('SELECT id, username, email FROM users WHERE email = $1 AND password = $2', [email, password]);
 
         if (result.rows.length > 0) {
             req.session.user = result.rows[0];
             res.redirect('/');
         } else {
+            // Manejar error de autenticación 
             res.redirect('/'); 
         }
     } catch (err) {
         console.error('Error en el login:', err);
-        res.status(500).send('Error interno del servidor');
+        res.status(500).send('Error interno del servidor en login');
     }
 });
 
